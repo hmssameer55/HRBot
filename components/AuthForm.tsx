@@ -37,7 +37,11 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      throw new Error();
+      if (type == "sign-in") {
+        router.push("/");
+      } else {
+        router.push("sign-in");
+      }
     } catch (error) {
       toast.error("Something went wrong");
     }
