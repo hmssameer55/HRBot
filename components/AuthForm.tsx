@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/firebaseFolder/client";
 import { signIn, signUp } from "@/lib/actions/auth.action";
+import Link from "next/link";
 
 const authFormSchema = (type: FormType) => {
   return z.object({
@@ -22,8 +23,8 @@ const authFormSchema = (type: FormType) => {
     email: z.string().email({
       message: "Invalid email address",
     }),
-    password: z.string().min(3, {
-      message: "Password must be at least 3 characters long",
+    password: z.string().min(6, {
+      message: "Password must be at least 6 characters long",
     }),
   });
 };
@@ -90,7 +91,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         router.push("/");
       }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong. Please try again.");
     }
   }
 
@@ -141,6 +142,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </Button>
           </form>
         </Form>
+        <p className="text-center">
+          {isSignIn ? "No account yet?" : "Have an account already?"}
+          <Link
+            href={!isSignIn ? "/sign-in" : "/sign-up"}
+            className="font-bold text-user-primary ml-1"
+          >
+            {!isSignIn ? "Sign In" : "Sign Up"}
+          </Link>
+        </p>
       </div>
     </div>
   );

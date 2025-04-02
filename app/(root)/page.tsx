@@ -3,9 +3,24 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import InterviewCard from "@/components/InterviewCard";
-import { dummyInterviews } from "@/constants";
+
+import { getCurrentUser } from "@/lib/actions/auth.action";
+import {
+  getInterviewsByUserId,
+  getLatestInterviews,
+} from "@/lib/actions/general.action";
 
 async function Home() {
+  const user = await getCurrentUser();
+
+  const [userInterviews, allInterview] = await Promise.all([
+    getInterviewsByUserId(user?.id!),
+    getLatestInterviews({ userId: user?.id! }),
+  ]);
+
+  const hasPastInterviews = userInterviews?.length! > 0;
+  const hasUpcomingInterviews = allInterview?.length! > 0;
+
   return (
     <>
       <section className="card-cta">
@@ -22,7 +37,7 @@ async function Home() {
 
         <Image
           src="/robot.png"
-          alt="robo-dude"
+          alt="robot-dude"
           width={400}
           height={400}
           className="max-sm:hidden"
@@ -33,11 +48,11 @@ async function Home() {
         <h2>Your Interviews</h2>
 
         <div className="interviews-section">
-          {dummyInterviews.length ? (
-            dummyInterviews?.map((interview) => (
+          {hasPastInterviews ? (
+            userInterviews?.map((interview) => (
               <InterviewCard
                 key={interview.id}
-                userId={interview.userId}
+                userId={user?.id}
                 interviewId={interview.id}
                 role={interview.role}
                 type={interview.type}
@@ -55,11 +70,11 @@ async function Home() {
         <h2>Take Interviews</h2>
 
         <div className="interviews-section">
-          {dummyInterviews.length ? (
-            dummyInterviews?.map((interview) => (
+          {hasUpcomingInterviews ? (
+            allInterview?.map((interview) => (
               <InterviewCard
                 key={interview.id}
-                userId={interview.userId}
+                userId={user?.id}
                 interviewId={interview.id}
                 role={interview.role}
                 type={interview.type}
