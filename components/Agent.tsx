@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.action";
+import { Phone, PhoneOff, Mic } from "lucide-react";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -152,14 +153,24 @@ const Agent = ({
           <div className="avatar">
             <Image
               src="/ai-avatar.png"
-              alt="profile-image"
+              alt="AI Interviewer"
               width={65}
               height={54}
               className="object-cover"
             />
-            {isSpeaking && <span className="animate-speak" />}
+            {isSpeaking && (
+              <>
+                <span className="animate-speak" />
+                <div className="absolute -bottom-2 -right-2 bg-primary-200 rounded-full p-1.5 shadow-lg shadow-primary-200/30 z-20">
+                  <Mic className="h-3.5 w-3.5 text-dark-100" />
+                </div>
+              </>
+            )}
           </div>
           <h3>AI Interviewer</h3>
+          <p className="text-sm text-light-400 text-center max-w-xs">
+            Your virtual interview assistant is ready to help you practice
+          </p>
         </div>
 
         {/* User Profile Card */}
@@ -167,12 +178,13 @@ const Agent = ({
           <div className="card-content">
             <Image
               src="/user-avatar-2.jpg"
-              alt="profile-image"
+              alt="User Profile"
               width={539}
               height={539}
-              className="rounded-full object-cover size-[120px]"
+              className="rounded-full object-cover size-[120px] border-2 border-primary-200/30"
             />
             <h3>{userName}</h3>
+            <p className="text-sm text-light-400 text-center">Interviewee</p>
           </div>
         </div>
       </div>
@@ -193,25 +205,36 @@ const Agent = ({
         </div>
       )}
 
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center mt-8">
         {callStatus !== "ACTIVE" ? (
-          <button className="relative btn-call" onClick={() => handleCall()}>
+          <button
+            className={cn(
+              "btn-call flex items-center gap-2",
+              callStatus === "CONNECTING" && "connecting"
+            )}
+            onClick={() => handleCall()}
+            disabled={callStatus === "CONNECTING"}
+          >
             <span
               className={cn(
                 "absolute animate-ping rounded-full opacity-75",
                 callStatus !== "CONNECTING" && "hidden"
               )}
             />
-
+            <Phone className="h-4 w-4" />
             <span className="relative">
               {callStatus === "INACTIVE" || callStatus === "FINISHED"
-                ? "Call"
-                : ". . ."}
+                ? "Start Interview"
+                : "Connecting..."}
             </span>
           </button>
         ) : (
-          <button className="btn-disconnect" onClick={() => handleDisconnect()}>
-            End
+          <button
+            className="btn-disconnect flex items-center gap-2"
+            onClick={() => handleDisconnect()}
+          >
+            <PhoneOff className="h-4 w-4" />
+            <span>End Interview</span>
           </button>
         )}
       </div>
